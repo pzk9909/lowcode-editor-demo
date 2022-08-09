@@ -1,0 +1,19 @@
+.left-container {
+    width: 450px;
+    /* background-color: rgb(231, 195, 195); */
+}
+
+.component-list {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.left-component {
+    height: 60px;
+    width: 100px;
+    margin: 10px;
+    border: 1px solid rgb(221, 221, 221);
+    text-align-last: center;
+    line-height: 60px;
+}
