@@ -36,3 +36,10 @@
     transform: rotate(360deg);
   }
 }
+
+
+.app-nav{
+  height: 50px;
+  border-bottom: 1px rgb(211, 211, 211) solid;
+  line-height: 50px;
+}

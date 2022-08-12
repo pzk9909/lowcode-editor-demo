@@ -6,4 +6,5 @@ export default interface Schema {
     title?: string
     options?:Array<any>
     columns?:Array<any>
+    path:string
 }

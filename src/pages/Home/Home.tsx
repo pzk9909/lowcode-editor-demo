@@ -4,6 +4,7 @@ import Right from '../Right/Right';
 import Middle from '../Middle/Middle';
 import store from '../../store/store';
 import { Button } from 'antd';
+import { Link } from 'react-router-dom';
 export default function Home() {
 
 
@@ -20,8 +21,7 @@ export default function Home() {
             <Left></Left>
             <Middle></Middle>
             <Right></Right>
-            <div className='save-button'><Button onClick={handleSave}>保存</Button></div>
         </div>
-
+        
     );
 }

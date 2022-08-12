@@ -1,25 +1,18 @@
 // 定义一个状态
 import Schema from '../../schemaInterface'
 
-interface InitialState {
-    currentDragType:string
-}
-
-const initialState: InitialState = {
-    currentDragType: '',
-};
-
 
 const currentDragItem:Schema={
     type:'',
     id:-9998,
+    path:''
 }
 
 // 利用reducer将store和action串联起来
-function reducer(state = initialState, action: any) {
+function reducer(state = currentDragItem, action: any) {
     switch (action.type) {
-        case 'setDragType':
-            return { currentDragType: action.itemType};
+        case 'setCurrentDragItem':
+            return action.item;
         default:
             return state;
     }

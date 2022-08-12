@@ -1,7 +1,7 @@
-import { useRef, useState, useCallback } from 'react';
+import { useRef, useState, useCallback, useEffect } from 'react';
 import './style.css';
 import store from '../../store/store';
-import { setDragType, spitSchema, setEditorItemId, pushSchemaByWrapId } from '../../store/action'
+import { spitSchema,  setEditorItemId, pushSchemaByWrapId, setCurrentDragItem, moveSchemaByWrapId } from '../../store/action'
 import clone from '../../clone'
 import { debounce } from 'lodash';
 import { Input } from 'antd';
@@ -14,69 +14,53 @@ export default function Middle() {
     const dragIndex2 = useRef(0) //记录上次拖拽到达位置的下标
     const [schema, setSchema] = useState<Schema>() //画布数据
     const [clickId, setClickId] = useState<number>() //记录当前点击的组件的ID
-    const count = useRef(0) //计数生成组件ID
-
+    const [dragItem, setDragItem] = useState<Schema>()
     const handleDrop = (e: any) => {
         e.preventDefault();
-        console.log(e.target);
+        console.log(e.target, 'middle-drop');
         dragIndex2.current = -1 //放置后把上次拖拽到达位置重置
-        if (store.getState().currentDragItem.currentDragType !== '') {
-            let item = {}
-            switch (store.getState().currentDragItem.currentDragType) {
-                case 'input':
-                    item = {
-                        type: store.getState().currentDragItem.currentDragType,
-                        id: count.current++,
-                        name: 'text',
-                        title: '输入框'
-                    }; break;
-                case 'select':
-                    item = {
-                        type: store.getState().currentDragItem.currentDragType,
-                        id: count.current++,
-                        name: 'select',
-                        title: '选择器',
-                        options: [{ label: '选项A', value: 'A' }, { label: '选项B', value: 'B' }, { label: '选项C', value: 'C' }]
-                    }; break;
-                case 'textarea':
-                    item = {
-                        type: store.getState().currentDragItem.currentDragType,
-                        id: count.current++,
-                        name: 'textarea',
-                        title: '多行文本',
-                    }; break;
-                case 'grid':
-                    item = {
-                        type: store.getState().currentDragItem.currentDragType,
-                        id: count.current++,
-                        name: 'grid',
-                        title: '栅格',
-                        columns: [{
-                            id: count.current++,
-                            body: []
-                        }, {
-                            id: count.current++,
-                            body: []
-                        }]
-                    }; break;
-            }
-            store.dispatch(pushSchemaByWrapId(-1, item))
-            store.dispatch(setDragType(''))
-            // console.log(store.getState());
+        // console.log(store.getState().currentDragItem); 
+        // if (JSON.stringify(store.getState().currentDragItem) !== '{}' || store.getState().currentDragItem.type.indexOf('droped') !== -1) {
+        if (store.getState().currentDragItem.type.indexOf('droped') === -1) {
+            console.log('push');
+            store.dispatch(pushSchemaByWrapId(0, store.getState().currentDragItem))
+        } else if (store.getState().currentDragItem.type.indexOf('droped') !== -1 && e.target.id === 'page') {
+            console.log('move');
+            store.dispatch(moveSchemaByWrapId(0, store.getState().currentDragItem))
         }
     } //画布放置事件
 
-    const handleDragEnter = (e: any, index: number) => {
-        if (e.target.className.indexOf('grid-column') !== -1) {
 
-        } else if (store.getState().currentDragItem.currentDragType === '' && index !== dragIndex2.current) {
-            console.log(dragIndex1.current, '----', index);
-            indexChange(e, index)
-        }
-        // if (store.getState().currentDragItem.currentDragType === '' && index !== dragIndex2.current) {
+    useEffect(() => {
+        setSchema(clone(store.getState().schema))
+    }, [])
+
+    const handleDragEnter = (e: any, id: number) => {
+
+
+        // console.log(id);
+        // const dragItem = store.getState().currentDragItem
+        // const enterId = id
+        // if (dragItem.type.indexOf('droped') !== -1) {
+        //     if (dragItem.id !== enterId) {
+        //         store.dispatch(spitSchemaById(dragItem, enterId))
+        //     }
+        // }
+
+
+
+
+        // if (e.target.className.indexOf('grid-column') !== -1 ) {
+        // } else if (index !== dragIndex2.current && store.getState().currentDragItem.type.indexOf('droped') !== -1 ) {
         //     console.log(dragIndex1.current, '----', index);
         //     indexChange(e, index)
         // }
+
+        // if (store.getState().currentDragItem.currentDragType === '' && index !== dragIndex2.current) {
+        //     console.log(dragIndex1.current, '----', index);
+        //     indexChange(e, index)    
+        // }
+
     } //拖拽过程进入组件触发事件
 
     const indexChange = useCallback(debounce((e: any, index: number) => {
@@ -99,15 +83,37 @@ export default function Middle() {
     const handleDragLeave = (e: any) => e.dataTransfer.dropEffect = 'none';
 
     store.subscribe(() => {
-        clone(store.getState().schema)
         setSchema(clone(store.getState().schema))
+        setClickId(store.getState().editorItem.currentEditorItemId)
     }); //store状态更新触发
 
 
-    const handleOnDragStart = (e: any, index: number) => {
-        console.log(e);
-        e.target.className += ' onDrag'
-        dragIndex1.current = index
+    const findItemById = (schema: any, id: number) => {
+        for (let key in schema) {
+            if (key === 'id' && schema[key] === id) {
+                console.log(schema, '找到了');
+                store.dispatch(setCurrentDragItem(schema))
+                return schema
+            }
+            if (key === 'body') {
+                for (let i = 0; i < schema[key].length; i++) {
+                    findItemById(schema[key][i], id)
+                }
+            }
+        }
+    } //根据ID在schema中找到所编辑的组件
+
+
+    const handleOnDragStart = (e: any, index: number, id: number) => {
+        console.log(e.target);
+        console.log(id);
+        if (e.target.className.indexOf('middle-component-container') !== -1) {
+            console.log(e.target, '----');
+            findItemById(schema, id);
+            console.log(store.getState().currentDragItem);
+            e.target.className += ' onDrag'
+            dragIndex1.current = index
+        }
     } //组件开始拖拽事件
 
     const handleOnDragEnd = (e: any) => {
@@ -115,7 +121,6 @@ export default function Middle() {
     } //组件结束拖拽事件
 
     const handleComponentClick = (id: number) => {
-        setClickId(id)
         store.dispatch(setEditorItemId(id))
     } //组件点击选中事件
 
@@ -139,42 +144,43 @@ export default function Middle() {
                 {
                     schema?.body?.length === 0 ? (<div></div>) : (schema?.body?.map((item, index) => {
                         switch (item.type) {
-                            case 'input':
+                            case 'input_droped':
                                 return (
                                     <div id={`${item.id}`}
                                         key={item.id}
                                         className={item.id === clickId ? 'middle-component-container click' : 'middle-component-container'}
                                         onClick={() => { handleComponentClick(item.id) }}
-                                        onDragStart={() => { handleOnDragStart(window.event, index) }}
-                                        onDragEnter={() => { handleDragEnter(window.event, index) }}
+                                        onDragStart={() => { handleOnDragStart(window.event, index, item.id) }}
+                                        onDragEnter={() => { handleDragEnter(window.event, item.id) }}
                                         onDragEnd={handleOnDragEnd}
                                         draggable>
-                                        <div className='component-label'>{item.title}</div>
+                                        <div className='component-label'>{item.title}{item.id}</div>
                                         <Input name={item.name} className='middle-component'></Input>
                                     </div>
                                 )
-                            case 'textarea':
+                            case 'textarea_droped':
                                 return (
                                     <div id={`${item.id}`}
                                         key={item.id}
                                         className={item.id === clickId ? 'middle-component-container click' : 'middle-component-container'}
                                         onClick={() => { handleComponentClick(item.id) }}
-                                        onDragStart={() => { handleOnDragStart(window.event, index) }}
-                                        onDragEnter={() => { handleDragEnter(window.event, index) }}
+                                        onDragStart={() => { handleOnDragStart(window.event, index, item.id) }}
+                                        onDragEnter={() => { handleDragEnter(window.event, item.id) }}
                                         onDragEnd={handleOnDragEnd}
                                         draggable>
                                         <div className='component-label'>{item.title}</div>
-                                        <TextArea name={item.name} className='middle-component' />
+                                        <TextArea rows={2} name={item.name} className='middle-component' />
                                     </div>
                                 )
-                            case 'select':
+                            case 'select_droped':
                                 return (
-                                    <div id={`${item.id}`}
+                                    <div
+                                        id={`${item.id}`}
                                         key={item.id}
                                         className={item.id === clickId ? 'middle-component-container click' : 'middle-component-container'}
                                         onClick={() => { handleComponentClick(item.id) }}
-                                        onDragStart={() => { handleOnDragStart(window.event, index) }}
-                                        onDragEnter={() => { handleDragEnter(window.event, index) }}
+                                        onDragStart={() => { handleOnDragStart(window.event, index, item.id) }}
+                                        onDragEnter={() => { handleDragEnter(window.event, item.id) }}
                                         onDragEnd={handleOnDragEnd}
                                         draggable>
                                         <div className='component-label'>{item.title}</div>
@@ -187,14 +193,14 @@ export default function Middle() {
                                         </select>
                                     </div>
                                 )
-                            case 'grid':
+                            case 'grid_droped':
                                 return (
                                     <div id={`${item.type}-${item.id}`}
                                         key={item.id}
                                         className={item.id === clickId ? 'middle-component-container click' : 'middle-component-container'}
                                         onClick={() => { handleComponentClick(item.id) }}
-                                        onDragStart={() => { handleOnDragStart(window.event, index) }}
-                                        onDragEnter={() => { handleDragEnter(window.event, index) }}
+                                        onDragStart={() => { handleOnDragStart(window.event, index, item.id) }}
+                                        onDragEnter={() => { handleDragEnter(window.event, item.id) }}
                                         onDragEnd={handleOnDragEnd}
                                         draggable>
                                         <Grid onDragOver={handleDragOver}

@@ -11,12 +11,12 @@ export default function Right() {
     const findItemById = (schema: any, id: number) => {
         for (let key in schema) {
             if (key === 'id' && schema[key] === id) {
-                // console.log(schema, '找到了');
+                console.log(schema, '找到了');
                 setEditorItem(schema)
                 setIsEditor(true)
                 return schema
             }
-            if (key === 'body') {
+            if (key === 'body' || key === 'columns') {
                 for (let i = 0; i < schema[key].length; i++) {
                     findItemById(schema[key][i], id)
                 }
@@ -29,6 +29,9 @@ export default function Right() {
         if (store.getState().editorItem.currentEditorItemId === -9999) {
             setIsEditor(false)
         } else {
+            console.log(store.getState().editorItem.currentEditorItemId);
+            console.log(schema);
+            
             findItemById(schema, store.getState().editorItem.currentEditorItemId)
         }
     }) //store状态更新触发

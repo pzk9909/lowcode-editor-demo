@@ -1,6 +1,6 @@
 .home-page-container{
     display: flex;
-    height: 100vh;
+    height: calc(100vh - 50px);
     width: 100vw;
 }
 
