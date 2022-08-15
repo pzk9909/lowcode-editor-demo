@@ -7,6 +7,19 @@
     padding: 10px;
     min-height: 30px;
     width: 40%;
-    background-color: antiquewhite;
+    background-color: rgb(255, 253, 250);
     border: 1px rgb(179, 179, 179) dashed;
+}
+
+.grid-component-container {
+    margin: 10px 0 10px 0;
+    border: 1px solid rgb(221, 221, 221);
+    width: 98%;
+    margin: auto;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.click {
+    border: 1px rgb(39, 72, 255) solid;
 }

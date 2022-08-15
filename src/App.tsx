@@ -8,9 +8,9 @@ import routes from './router/router'
 import store from './store/store';
 function App() {
   const handleSave = () => {
-    const schema = store.getState().schema
-    console.log(schema);
-    const jsonSchema = JSON.stringify(schema)
+    const schemaa = store.getState().schemaa
+    console.log(schemaa.get(0));
+    const jsonSchema = JSON.stringify(schemaa)
     console.log(jsonSchema);
     localStorage.setItem('schema', jsonSchema)
   }

@@ -26,7 +26,7 @@ export default function Editor(props: any) {
 
     if (props.schema) {  //根据编辑的组件类型返回不同的编辑区
         switch (props.schema.type) {
-            case 'input_droped': return (
+            case 'input': return (
                 <div>
                     <Form
                         labelCol={{ span: 6 }}
@@ -42,7 +42,7 @@ export default function Editor(props: any) {
                 </div>
 
             )
-            case 'select_droped': return (
+            case 'select': return (
                 <div>
                     <Form
                         labelCol={{ span: 6 }}
@@ -57,7 +57,7 @@ export default function Editor(props: any) {
                     </Form>
                 </div>
             )
-            case 'textarea_droped': return (
+            case 'textarea': return (
                 <div>
                     <Form
                         labelCol={{ span: 6 }}

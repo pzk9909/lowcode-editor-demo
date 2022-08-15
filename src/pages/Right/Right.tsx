@@ -25,14 +25,12 @@ export default function Right() {
     } //根据ID在schema中找到所编辑的组件
 
     store.subscribe(() => {
-        const schema = store.getState().schema
+        const schemaa = store.getState().schemaa
         if (store.getState().editorItem.currentEditorItemId === -9999) {
             setIsEditor(false)
         } else {
-            console.log(store.getState().editorItem.currentEditorItemId);
-            console.log(schema);
-            
-            findItemById(schema, store.getState().editorItem.currentEditorItemId)
+            setEditorItem(schemaa.get(store.getState().editorItem.currentEditorItemId))
+            setIsEditor(true)
         }
     }) //store状态更新触发
 

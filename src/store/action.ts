@@ -10,14 +10,14 @@ export const setCurrentDragItem = (item: Schema | {}) => {
     return { type: 'setCurrentDragItem', item: item };
 };
 
-export const pushSchema = (item: object) => {
-    return { type: 'pushSchema', item: item };
+// export const pushSchema = (item: object) => {
+//     return { type: 'pushSchema', item: item };
+// };
+export const pushSchema = (dropId: number, item: object) => {
+    return { type: 'pushSchema', dropId: dropId, item: item };
 };
-export const pushSchemaByWrapId = (wrapId: number, item: object) => {
-    return { type: 'pushSchemaByWrapId', wrapId: wrapId, item: item };
-};
-export const moveSchemaByWrapId = (wrapId: number, item: object) => {
-    return { type: 'moveSchemaByWrapId', wrapId: wrapId, item: item };
+export const moveSchemaByWrapId = (dropId: number, item: object) => {
+    return { type: 'moveSchemaByWrapIdd', dropId: dropId, item: item };
 };
 export const spitSchema = (oldIndex: number, newIndex: number) => {
     return { type: 'spitSchema', oldIndex: oldIndex, newIndex: newIndex };

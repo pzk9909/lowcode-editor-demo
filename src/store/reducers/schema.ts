@@ -6,8 +6,11 @@ const initialState: Schema = {
     type: 'page',
     id: 0,
     body: [],
-    path:'0'
+    path: '0'
 };
+
+const map = new Map()
+map.set(0, '0')
 
 
 const changeItemById = (schema: any, id: number, item: string, value: string) => {
@@ -31,7 +34,7 @@ const pushSchemaByWrapId = (schema: any, id: number, item: Schema) => {
             console.log(schema, '找到了');
             schema.body.push(item)
             console.log(schema);
-            
+
             return schema
         }
         if (key === 'body' || key === 'columns') {
@@ -174,7 +177,7 @@ function reducer(state = initialState, action: any) {
             }
             spliceSchemaById(schemaTmp, item.id, schemaTmp)
             pushSchemaByWrapId(schemaTmp, action.wrapId, action.item)
-            
+
 
             console.log(schemaTmp);
             return schemaTmp;

@@ -29,7 +29,8 @@ export default function Left() {
                     type: type,
                     id: count.current++,
                     name: 'text',
-                    title: '输入框'
+                    title: '输入框',
+                    path:''
                 }; break;
             case 'select':
                 item = {
@@ -37,7 +38,8 @@ export default function Left() {
                     id: count.current++,
                     name: 'select',
                     title: '选择器',
-                    options: [{ label: '选项A', value: 'A' }, { label: '选项B', value: 'B' }, { label: '选项C', value: 'C' }]
+                    options: [{ label: '选项A', value: 'A' }, { label: '选项B', value: 'B' }, { label: '选项C', value: 'C' }],
+                    path: ''
                 }; break;
             case 'textarea':
                 item = {
@@ -45,6 +47,7 @@ export default function Left() {
                     id: count.current++,
                     name: 'textarea',
                     title: '多行文本',
+                    path: ''
                 }; break;
             case 'grid':
                 item = {
@@ -58,7 +61,8 @@ export default function Left() {
                     }, {
                         id: count.current++,
                         body: []
-                    }]
+                    }],
+                    path: ''
                 }; break;
         }
         store.dispatch(setCurrentDragItem(item))
