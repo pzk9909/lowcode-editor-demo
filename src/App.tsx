@@ -2,15 +2,15 @@ import Home from './pages/Home/Home';
 import './App.css';
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom'
-import { useLocation } from 'react-router'
 import { Button } from 'antd';
 import routes from './router/router'
 import store from './store/store';
 function App() {
   const handleSave = () => {
-    const schemaa = store.getState().schemaa
-    console.log(schemaa.get(0));
-    const jsonSchema = JSON.stringify(schemaa)
+    const schema = store.getState().schemaMap.get(0)
+    console.log(schema);
+
+    const jsonSchema = JSON.stringify(schema)
     console.log(jsonSchema);
     localStorage.setItem('schema', jsonSchema)
   }

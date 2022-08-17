@@ -15,7 +15,13 @@
     margin-bottom: 10px;
 }
 
-.component-label{
+.middle-component-container:hover {
+
+}
+
+
+
+.component-label {
     text-align: left;
 }
 
@@ -35,10 +41,16 @@
 }
 
 .click {
-    border: 1px rgb(39, 72, 255) solid ; 
+    border: 1px rgb(39, 72, 255) solid;
 }
 
-.onDrag{
+.onDrag {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
+
+.dragEnter{
+    opacity: 0.1;
+    /* position:relative;
+    top: 30px; */
+}

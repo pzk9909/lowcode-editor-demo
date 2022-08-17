@@ -17,3 +17,13 @@
     text-align-last: center;
     line-height: 60px;
 }
+
+.delete-container{
+    width: 100px;
+    height: 100px;
+    background-color: rgb(170, 160, 160);
+    text-align: center;
+    line-height: 100px;
+    color: white;
+    font-size: 18px;
+}

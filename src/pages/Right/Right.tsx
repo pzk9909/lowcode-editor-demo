@@ -25,11 +25,11 @@ export default function Right() {
     } //根据ID在schema中找到所编辑的组件
 
     store.subscribe(() => {
-        const schemaa = store.getState().schemaa
+        const schemaMap = store.getState().schemaMap
         if (store.getState().editorItem.currentEditorItemId === -9999) {
             setIsEditor(false)
         } else {
-            setEditorItem(schemaa.get(store.getState().editorItem.currentEditorItemId))
+            setEditorItem(schemaMap.get(store.getState().editorItem.currentEditorItemId))
             setIsEditor(true)
         }
     }) //store状态更新触发
@@ -37,14 +37,16 @@ export default function Right() {
     return (
         <div className='right-container'>
             <h1>编辑区</h1>
-            {isEditor ? (
-                <div>
-                    <div>类型:{editorItem?.type}</div>
-                    <div>id:{editorItem?.id}</div>
-                    <Editor schema={editorItem}></Editor>
-                </div >
-            ) : (
-                <div></div >)}
+            {isEditor ?
+                (
+                    <div>
+                        <div>类型:{editorItem?.type}</div>
+                        <div>id:{editorItem?.id}</div>
+                        <Editor schema={editorItem}></Editor>
+                    </div >
+                )
+                :
+                (<div></div >)}
 
         </div>
     );

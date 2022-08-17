@@ -1,7 +1,5 @@
-
 import clone from '../../clone'
 import Schema from '../../schemaInterface'
-
 const initialState: Schema = {
     type: 'page',
     id: 0,
@@ -11,7 +9,6 @@ const initialState: Schema = {
 
 const map = new Map()
 map.set(0, '0')
-
 
 const changeItemById = (schema: any, id: number, item: string, value: string) => {
     for (let key in schema) {
@@ -177,8 +174,6 @@ function reducer(state = initialState, action: any) {
             }
             spliceSchemaById(schemaTmp, item.id, schemaTmp)
             pushSchemaByWrapId(schemaTmp, action.wrapId, action.item)
-
-
             console.log(schemaTmp);
             return schemaTmp;
         default:
