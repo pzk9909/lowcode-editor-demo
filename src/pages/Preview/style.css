@@ -1,18 +1,16 @@
 .pre-container {
     width: 100%;
     background-color: #fff;
-    border-left: 1px solid rgb(209, 209, 209);
-    border-right: 1px solid rgb(209, 209, 209);
-    overflow-y: scroll;
 }
 
 .pre-component-container {
-    margin: 10px 0 10px 0;
-    border: 1px solid rgb(221, 221, 221);
     width: 98%;
     margin: auto;
-    padding: 10px;
     margin-bottom: 10px;
+}
+
+.pre-component-container .ant-form-item {
+    margin-bottom: 0;
 }
 
 .pre-label {

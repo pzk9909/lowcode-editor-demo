@@ -7,6 +7,7 @@ export default function Right() {
 
     const [editorItem, setEditorItem] = useState<Schema>() //当前编辑的组件
     const [isEditor, setIsEditor] = useState<boolean>(false)  //是否选中编辑组件
+    const [isNew, setIsNew] = useState(false)
 
     const findItemById = (schema: any, id: number) => {
         for (let key in schema) {
@@ -30,6 +31,7 @@ export default function Right() {
             setIsEditor(false)
         } else {
             setEditorItem(schemaMap.get(store.getState().editorItem.currentEditorItemId))
+            setIsNew(store.getState().editorItem.isNew)
             setIsEditor(true)
         }
     }) //store状态更新触发
@@ -42,12 +44,11 @@ export default function Right() {
                     <div>
                         <div>类型:{editorItem?.type}</div>
                         <div>id:{editorItem?.id}</div>
-                        <Editor schema={editorItem}></Editor>
+                        <Editor isNew={isNew} schema={editorItem}></Editor>
                     </div >
                 )
                 :
                 (<div></div >)}
-
         </div>
     );
 }

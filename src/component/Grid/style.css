@@ -17,9 +17,36 @@
     width: 98%;
     margin: auto;
     padding: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
+
+.grid-component-top {
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+}
+
+.component-label {
+    pointer-events: none;
+}
+
+.grid-component-container:hover {
+    /* border: 2px rgb(209, 209, 209) dashed; */
+}
+
 
 .click {
     border: 1px rgb(39, 72, 255) solid;
+}
+
+
+.dragEnter-bottom  {
+    border-bottom: 3px rgb(114, 114, 114) solid ;
+    border-right: 3px rgb(114, 114, 114) solid ;
+    
+}
+
+.dragEnter-top {
+    border-top: 3px rgb(114, 114, 114) solid ;
+    border-left: 3px rgb(114, 114, 114) solid ;
 }

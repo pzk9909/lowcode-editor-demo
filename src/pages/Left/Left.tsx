@@ -1,15 +1,13 @@
 import './style.css';
 import store from '../../store/store';
-import { deleteSchema, setCurrentDragItem } from '../../store/action'
-import { useRef } from 'react';
+import { deleteSchema, setCurrentDragItem, setEditorItemId } from '../../store/action'
+import { useRef, useState } from 'react';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { Modal, } from 'antd';
+import { message } from 'antd';
 
 export default function Left() {
-    const { confirm } = Modal;
 
-    let count = useRef(1)
-
+    const [allowDrag, setAllowDrag] = useState(true)
     const componentList = [{
         type: 'input',
     },
@@ -23,105 +21,90 @@ export default function Left() {
         type: 'grid',
     }] //组件类型列表
 
-    const onDragStart = (type: string) => {
-        let item = {}
-        console.log(type);
-        switch (type) {
-            case 'input':
-                item = {
-                    type: type,
-                    id: count.current++,
-                    name: 'text',
-                    title: '输入框',
-                    path: ''
-                }; break;
-            case 'select':
-                item = {
-                    type: type,
-                    id: count.current++,
-                    name: 'select',
-                    title: '选择器',
-                    options: [{ label: '选项A', value: 'A' }, { label: '选项B', value: 'B' }, { label: '选项C', value: 'C' }],
-                    path: ''
-                }; break;
-            case 'textarea':
-                item = {
-                    type: type,
-                    id: count.current++,
-                    name: 'textarea',
-                    title: '多行文本',
-                    path: ''
-                }; break;
-            case 'grid':
-                item = {
-                    type: type,
-                    id: count.current++,
-                    name: 'grid',
-                    title: '栅格',
-                    columns: [{
-                        id: count.current++,
-                        body: []
-                    }, {
-                        id: count.current++,
-                        body: []
-                    }],
-                    path: ''
-                }; break;
+    store.subscribe(() => {
+        setAllowDrag(!store.getState().editorItem.isNew)
+    }); //store状态更新触发
+
+    const onDragStart = (e: any, type: string) => {
+        if (!allowDrag) {
+            return
+        } else {
+            let item = {}
+            console.log(type);
+            let id = Date.now()
+            switch (type) {
+                case 'input':
+                    item = {
+                        type: type,
+                        id: id++,
+                        name: 'text',
+                        title: '输入框',
+                        parentId: -1
+                    }; break;
+                case 'select':
+                    item = {
+                        type: type,
+                        id: id++,
+                        name: 'select',
+                        title: '选择器',
+                        options: [{ label: '选项A', value: 'A' }, { label: '选项B', value: 'B' }, { label: '选项C', value: 'C' }],
+                        parentId: -1
+                    }; break;
+                case 'textarea':
+                    item = {
+                        type: type,
+                        id: id++,
+                        name: 'textarea',
+                        title: '多行文本',
+                        parentId: -1
+                    }; break;
+                case 'grid':
+                    item = {
+                        type: type,
+                        id: id++,
+                        title: '栅格',
+                        columns: [{
+                            id: id++,
+                            body: []
+                        }, {
+                            id: id++,
+                            body: []
+                        }],
+                        parentId: -1
+                    }; break;
+            }
+
+            store.dispatch(setCurrentDragItem(item))
         }
-        store.dispatch(setCurrentDragItem(item))
         // console.log(store.getState());
     } //组件开始拖拽事件
 
-    const handleDragEnd = () => {
+    const handleDragEnd = (e: any) => {
         store.dispatch(setCurrentDragItem({}))
     }//组件结束拖拽事件
     const handleDragOver = (e: any) => { e.preventDefault(); }
-    const handleDragLeave = (e: any) => e.dataTransfer.dropEffect = 'none';
-    const handleDelete = (e: any) => {
-        console.log(store.getState().currentDragItem);
-        if (store.getState().currentDragItem.path !== '') {
-            confirm({
-                title: '是否确认删除该组件?',
-                icon: <ExclamationCircleOutlined />,
-                content: '本操作将同时删除该组件下的所有子组件',
-                okText: '是',
-                okType: 'danger',
-                cancelText: '否',
-                onOk() {
-                    console.log('OK');
-                    console.log(store.getState().currentDragItem.id);
-                    const deleteId = store.getState().currentDragItem.id
-                    console.log(deleteId, 'deleteId');
-
-                    store.dispatch(deleteSchema(deleteId))
-                },
-                onCancel() {
-                    console.log('Cancel');
-                },
-            });
-        }
-
-    }//删除组件
-
+    const handleDragLeave = (e: any) => { }
     return (
-        <div className='left-container' onDragOver={handleDragOver} onDragLeave={handleDragLeave}  >
-            <h1 className='left-title'>物料区</h1>
-            <div className='component-list'>
-                {componentList.map(item => {
-                    return (
-                        <div
-                            key={item.type}
-                            draggable
-                            onDragEnd={handleDragEnd}
-                            onDragStart={() => { onDragStart(item.type) }}
-                            className='left-component'
-                        >
-                            {item.type}
-                        </div>
-                    )
-                })}
-                <div onDrop={handleDelete} className='delete-container'>回收站</div>
+        <div>
+            <div className='left-container' onDragOver={handleDragOver} onDragLeave={handleDragLeave}  >
+                <h1 className='left-title'>物料区</h1>
+                <div className='component-list'>
+                    {componentList.map(item => {
+                        return (
+                            <div
+                                key={item.type}
+                                draggable
+                                onDragEnd={handleDragEnd}
+                                onDragStart={(event: any) => { onDragStart(event, item.type) }}
+                                className='left-component'
+                            >
+                                {item.type}
+                            </div>
+                        )
+                    })}
+                </div>
             </div>
         </div>
+
     );
 }

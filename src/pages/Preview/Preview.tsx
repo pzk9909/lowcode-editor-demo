@@ -2,37 +2,47 @@ import { useEffect, useState } from "react"
 import store from "../../store/store"
 import Schema from '../../schemaInterface'
 import clone from '../../clone'
-import Grid from "../../component/Grid/Grid"
+import PreGrid from "../../component/Grid-pre/PreGrid"
 import { Input, Button, Form, Select } from "antd"
 import './style.css'
 export default function Preview() {
     const { TextArea } = Input;
     const { Option } = Select;
     const [schema, setSchema] = useState<Schema>() //画布数据
-    const fun = () => {
 
-    }
+    const [data, setData] = useState<any>({})
+
+
+
+
     useEffect(() => {
         const schema = clone(store.getState().schemaMap.get(0))
         console.log(schema);
         setSchema(schema)
+        const dataJSON = localStorage.getItem('data')
+        if (dataJSON) {
+            const data = JSON.parse(dataJSON)
+            console.log(data);
+            setData(data)
+        }
     }, [])
 
     const [form] = Form.useForm();
 
     const onFinish = () => {
         console.log('finish');
-        console.log(form.getFieldsValue());
+        const data = JSON.stringify(form.getFieldsValue())
+        console.log(data);
+        localStorage.setItem('data', data)
     }
 
     return (
-        <div>
+        <div className="pre-container">
             <h1>预览</h1>
             <div>
                 <Form
                     form={form}
                     name="basic"
-                    onFinish={onFinish}
                     initialValues={{ remember: true }}
                     autoComplete="off"
                 >
@@ -48,6 +58,7 @@ export default function Preview() {
                                             <Form.Item
                                                 label={item.title}
                                                 name={item.name}
+                                                initialValue={data ? data[item.name ? item.name : ''] : ''}
                                             >
                                                 <Input className='pre-component'></Input>
                                             </Form.Item>
@@ -61,6 +72,7 @@ export default function Preview() {
                                             <Form.Item
                                                 label={item.title}
                                                 name={item.name}
+                                                initialValue={data ? data[item.name ? item.name : ''] : ''}
                                             >
                                                 <TextArea className='pre-component' />
                                             </Form.Item>
@@ -75,6 +87,7 @@ export default function Preview() {
                                             <Form.Item
                                                 label={item.title}
                                                 name={item.name}
+                                                initialValue={data ? data[item.name ? item.name : ''] : ''}
                                             >
                                                 <Select
                                                     placeholder="请选择"
@@ -94,7 +107,7 @@ export default function Preview() {
                                         <div id={`${item.type}-${item.id}`}
                                             key={item.id}
                                             className={'pre-component-container'}>
-                                            <Grid isPre item={item}></Grid>
+                                            <PreGrid data={data} item={item}></PreGrid>
                                         </div>
                                     )
                                 default: return (
@@ -104,7 +117,7 @@ export default function Preview() {
                         }))
                     }
                     {
-                        schema?.body?.length !== 0 ? (<Button type="primary" htmlType="submit">提交</Button>) : (<div></div>)
+                        schema?.body?.length !== 0 ? (<Button type="primary" onClick={onFinish}>提交</Button>) : (<div></div>)
                     }
                 </Form>
             </div>

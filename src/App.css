@@ -42,4 +42,8 @@
   height: 50px;
   border-bottom: 1px rgb(211, 211, 211) solid;
   line-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 20px;
 }

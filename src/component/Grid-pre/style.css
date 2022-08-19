@@ -1,0 +1,22 @@
+.grid {
+    display: flex;
+    justify-content: space-around;
+}
+
+
+.grid-pre-column {
+    width: 40%;
+    /* background-color: rgb(253, 248, 242);
+    border: 1px rgb(179, 179, 179) dashed; */
+}
+
+.grid-pre-component-container {
+    /* border: 1px solid rgb(221, 221, 221); */
+    width: 98%;
+    margin: auto;
+    margin-bottom: 10px;
+}
+
+.grid-pre-component-container .ant-form-item {
+    margin-bottom: 0;
+}

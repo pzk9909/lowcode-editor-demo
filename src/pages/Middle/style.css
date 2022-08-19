@@ -1,5 +1,6 @@
 .middle-container {
-    width: 100%;
+    flex: 1;
+    min-width: 800px;
     background-color: #fff;
     border-left: 1px solid rgb(209, 209, 209);
     border-right: 1px solid rgb(209, 209, 209);
@@ -7,22 +8,30 @@
 }
 
 .middle-component-container {
-    margin: 10px 0 10px 0;
-    border: 1px solid rgb(221, 221, 221);
+    border:1px solid rgb(209, 209, 209);
     width: 98%;
     margin: auto;
     padding: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
+    display: flex;
+    flex-direction: column;
 }
 
 .middle-component-container:hover {
-
+    /* border: 2px rgb(209, 209, 209) dashed; */
 }
 
+.middle-component-top{
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+}
 
+.delete {
+}
 
 .component-label {
-    text-align: left;
+    pointer-events: none;
 }
 
 .middle-component {
@@ -41,7 +50,7 @@
 }
 
 .click {
-    border: 1px rgb(39, 72, 255) solid;
+    border: 1px rgb(39, 72, 255) solid !important;
 }
 
 .onDrag {
@@ -49,8 +58,13 @@
 }
 
 
-.dragEnter{
-    opacity: 0.1;
-    /* position:relative;
-    top: 30px; */
+.dragEnter-bottom {
+    border-bottom: 3px rgb(114, 114, 114) solid;
+    border-right: 3px rgb(114, 114, 114) solid;
 }
+
+.dragEnter-top {
+    border-top: 3px rgb(114, 114, 114) solid;
+    border-left: 3px rgb(114, 114, 114) solid;
+}
+
