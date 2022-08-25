@@ -1,7 +1,7 @@
 // 定义一个状态
 
 
-const initialState = <any>[]
+const initialState = [] as any
 
 
 

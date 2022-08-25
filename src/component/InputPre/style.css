@@ -1,0 +1,8 @@
+.pre-component {
+    width: 100%;
+    resize: vertical;
+}
+
+.hidden {
+    display: none;
+}

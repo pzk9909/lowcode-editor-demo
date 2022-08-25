@@ -8,7 +8,7 @@
 }
 
 .middle-component-container {
-    border:1px solid rgb(209, 209, 209);
+    border: 1px solid rgb(209, 209, 209);
     width: 98%;
     margin: auto;
     padding: 10px;
@@ -21,14 +21,13 @@
     /* border: 2px rgb(209, 209, 209) dashed; */
 }
 
-.middle-component-top{
+.middle-component-top {
     display: flex;
     justify-content: space-between;
     pointer-events: none;
 }
 
-.delete {
-}
+.delete {}
 
 .component-label {
     pointer-events: none;
@@ -67,4 +66,3 @@
     border-top: 3px rgb(114, 114, 114) solid;
     border-left: 3px rgb(114, 114, 114) solid;
 }
-

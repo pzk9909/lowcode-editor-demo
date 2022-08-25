@@ -1,15 +1,14 @@
 import './style.css';
 import store from '../../store/store';
-import { deleteSchema, setCurrentDragItem, setEditorItemId } from '../../store/action'
-import { useRef, useState } from 'react';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { message } from 'antd';
-
+import { setCurrentDragItem } from '../../store/action'
+import { useState } from 'react';
 export default function Left() {
-
     const [allowDrag, setAllowDrag] = useState(true)
     const componentList = [{
         type: 'input',
+    },
+    {
+        type: 'numberInput'
     },
     {
         type: 'textarea',
@@ -30,7 +29,7 @@ export default function Left() {
             return
         } else {
             let item = {}
-            console.log(type);
+            // console.log(type);
             let id = Date.now()
             switch (type) {
                 case 'input':
@@ -39,6 +38,14 @@ export default function Left() {
                         id: id++,
                         name: 'text',
                         title: '输入框',
+                        parentId: -1
+                    }; break;
+                case 'numberInput':
+                    item = {
+                        type: type,
+                        id: id++,
+                        name: 'number',
+                        title: '数字框',
                         parentId: -1
                     }; break;
                 case 'select':
@@ -73,7 +80,6 @@ export default function Left() {
                         parentId: -1
                     }; break;
             }
-
             store.dispatch(setCurrentDragItem(item))
         }
         // console.log(store.getState());

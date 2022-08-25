@@ -4,7 +4,9 @@ export default interface Schema {
     id: number
     name?: string
     title?: string
-    options?:Array<any>
-    columns?:Array<any>
-    path:string
+    options?: Array<any>
+    columns?: Array<any>
+    parentId?: number
+    expressions?: Array<string>
+    status?: string
 }

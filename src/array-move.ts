@@ -1,4 +1,4 @@
-export function arrayMoveMutable(array:Array<any>, fromIndex:number, toIndex:number) {
+export function arrayMoveMutable(array: Array<any>, fromIndex: number, toIndex: number) {
     const startIndex = fromIndex < 0 ? array.length + fromIndex : fromIndex;
 
     if (startIndex >= 0 && startIndex < array.length) {

@@ -40,13 +40,13 @@
 }
 
 
-.dragEnter-bottom  {
-    border-bottom: 3px rgb(114, 114, 114) solid ;
-    border-right: 3px rgb(114, 114, 114) solid ;
-    
+.dragEnter-bottom {
+    border-bottom: 3px rgb(114, 114, 114) solid;
+    border-right: 3px rgb(114, 114, 114) solid;
+
 }
 
 .dragEnter-top {
-    border-top: 3px rgb(114, 114, 114) solid ;
-    border-left: 3px rgb(114, 114, 114) solid ;
+    border-top: 3px rgb(114, 114, 114) solid;
+    border-left: 3px rgb(114, 114, 114) solid;
 }

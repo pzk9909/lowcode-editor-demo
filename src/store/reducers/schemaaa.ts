@@ -4,7 +4,6 @@ const initialState: Schema = {
     type: 'page',
     id: 0,
     body: [],
-    path: '0'
 };
 
 const map = new Map()

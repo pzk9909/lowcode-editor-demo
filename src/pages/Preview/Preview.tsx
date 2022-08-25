@@ -1,40 +1,65 @@
 import { useEffect, useState } from "react"
-import store from "../../store/store"
 import Schema from '../../schemaInterface'
 import clone from '../../clone'
-import PreGrid from "../../component/Grid-pre/PreGrid"
-import { Input, Button, Form, Select } from "antd"
+import GridPre from "../../component/GridPre/GridPre"
+import { Button, Form } from "antd"
+import store from '../../store/store';
+import {  initDataMapAsync,  changeValueAsync } from '../../store/action'
 import './style.css'
+import InputPre from "../../component/InputPre/InputPre"
+import TextAreaPre from "../../component/TextAreaPre/TextAreaPre"
+import SelectPre from "../../component/SelectPre/SelectPre"
+import NumberInputPre from "../../component/NumberInputPre/NumberInputPre"
 export default function Preview() {
-    const { TextArea } = Input;
-    const { Option } = Select;
     const [schema, setSchema] = useState<Schema>() //画布数据
-
     const [data, setData] = useState<any>({})
-
-
-
-
+    const [form] = Form.useForm();
     useEffect(() => {
         const schema = clone(store.getState().schemaMap.get(0))
         console.log(schema);
         setSchema(schema)
         const dataJSON = localStorage.getItem('data')
+        let data = {}
         if (dataJSON) {
-            const data = JSON.parse(dataJSON)
-            console.log(data);
-            setData(data)
+            data = JSON.parse(dataJSON)
         }
+        setData(data)
+        store.dispatch(initDataMapAsync(store.getState().schemaMap, data))
+        // console.log(store.getState().previewDataMap);
     }, [])
 
-    const [form] = Form.useForm();
+    store.subscribe(() => {
+    })
 
     const onFinish = () => {
         console.log('finish');
-        const data = JSON.stringify(form.getFieldsValue())
-        console.log(data);
-        localStorage.setItem('data', data)
-    }
+        const dataMap = store.getState().previewDataMap
+        const saveData: any = {}
+        dataMap.forEach(item => {
+            if (item.value !== null) {
+                saveData[item.name] = item.value
+            }
+        })
+        console.log(saveData);
+        localStorage.setItem('data', JSON.stringify(saveData))
+    }//提交触发
+
+    const onChange = (e: any, name: string) => {
+        console.log(e);
+        let value
+        if (e === null) {
+            value = null
+        }
+        if (e) {
+            if (typeof e === 'number') {
+                value = e ? e : null
+            } else {
+                value = e.target.value ? e.target.value : null
+            }
+        }
+        console.log(name, ':', value);
+        store.dispatch(changeValueAsync(name, value))
+    }//表单域中数据改变触发
 
     return (
         <div className="pre-container">
@@ -51,63 +76,42 @@ export default function Preview() {
                             switch (item.type) {
                                 case 'input':
                                     return (
-
-                                        <div id={`${item.id}`}
+                                        <div
                                             key={item.id}
                                             className={'pre-component-container'}>
-                                            <Form.Item
-                                                label={item.title}
-                                                name={item.name}
-                                                initialValue={data ? data[item.name ? item.name : ''] : ''}
-                                            >
-                                                <Input className='pre-component'></Input>
-                                            </Form.Item>
+                                            <InputPre onChange={onChange} item={item} data={data}></InputPre>
+                                        </div>
+                                    )
+                                case 'numberInput':
+                                    return (
+                                        <div
+                                            key={item.id}
+                                            className={'pre-component-container'}>
+                                            <NumberInputPre onChange={onChange} item={item} data={data}></NumberInputPre>
                                         </div>
                                     )
                                 case 'textarea':
                                     return (
-                                        <div id={`${item.id}`}
+                                        <div
                                             key={item.id}
                                             className={'pre-component-container'}>
-                                            <Form.Item
-                                                label={item.title}
-                                                name={item.name}
-                                                initialValue={data ? data[item.name ? item.name : ''] : ''}
-                                            >
-                                                <TextArea className='pre-component' />
-                                            </Form.Item>
+                                            <TextAreaPre item={item} data={data}></TextAreaPre>
                                         </div>
                                     )
                                 case 'select':
                                     return (
                                         <div
-                                            id={`${item.id}`}
                                             key={item.id}
                                             className={'pre-component-container'}>
-                                            <Form.Item
-                                                label={item.title}
-                                                name={item.name}
-                                                initialValue={data ? data[item.name ? item.name : ''] : ''}
-                                            >
-                                                <Select
-                                                    placeholder="请选择"
-                                                    allowClear
-                                                >
-                                                    {item.options?.map(item => {
-                                                        return (
-                                                            <Option key={item.value} value={item.value}>{item.label}</Option>
-                                                        )
-                                                    })}
-                                                </Select>
-                                            </Form.Item>
+                                            <SelectPre item={item} data={data}></SelectPre>
                                         </div>
                                     )
                                 case 'grid':
                                     return (
-                                        <div id={`${item.type}-${item.id}`}
+                                        <div
                                             key={item.id}
                                             className={'pre-component-container'}>
-                                            <PreGrid data={data} item={item}></PreGrid>
+                                            <GridPre item={item} data={data}></GridPre>
                                         </div>
                                     )
                                 default: return (

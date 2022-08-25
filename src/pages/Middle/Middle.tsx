@@ -3,9 +3,13 @@ import './style.css';
 import store from '../../store/store';
 import { setEditorItemId, setCurrentDragItem, moveSchema, deleteSchema, initSchemaMap, initNameArray } from '../../store/action'
 import clone from '../../clone'
-import { Input, Modal, message, InputNumber } from 'antd';
+import { Input, Modal, message } from 'antd';
 import Schema from '../../schemaInterface'
-import Grid from '../../component/Grid/Grid';
+import GridEdi from '../../component/GridEdi/GridEdi';
+import InputEdi from '../../component/InputEdi/InputEdi';
+import TextAreaEdi from '../../component/TextAreaEdi/TextAreaEdi';
+import SelectEdi from '../../component/SelectEdi/SelectEdi';
+import NumberInputEdi from '../../component/NumberInputEdi/NumberInputEdi';
 import {
     DeleteOutlined,
     ExclamationCircleOutlined
@@ -28,7 +32,7 @@ export default function Middle() {
         setAllowDrag(!store.getState().editorItem.isNew) //更新是否允许拖拽
         setClickId(store.getState().editorItem.currentEditorItemId) //更新当前编辑的组件
     }); //store状态更新触发
-    const findSchemaById = (id: number) => {
+    const getSchemaById = (id: number) => {
         let schemaMap = store.getState().schemaMap
         return schemaMap.get(id)
     }//根据ID在schema中找到所编辑的组件
@@ -47,12 +51,12 @@ export default function Middle() {
             message.warn('新增组件未设置字段名')
             return
         } //如果不允许拖拽则不进行操作直接返回
-        console.log(e.target, '当前drop元素');
-        console.dir(e.target, '当前drop元素')
+        // console.log(e.target, '当前drop元素');
+        // console.dir(e.target, '当前drop元素')
         const dragItem = store.getState().currentDragItem
         if (JSON.stringify(dragItem) !== '{}') {
             store.dispatch(moveSchema(Number(id), store.getState().currentDragItem))
-            console.log(dragItem);
+            // console.log(dragItem);
 
             if (dragItem.parentId === -1) {
                 if (!(dragItem.hasOwnProperty('body') || dragItem.hasOwnProperty('columns'))) {
@@ -69,8 +73,8 @@ export default function Middle() {
         if (!allowDrag) {
             return
         }
-        store.dispatch(setCurrentDragItem(findSchemaById(id)))
-        store.dispatch(setEditorItemId(store.getState().currentDragItem.id,false))
+        store.dispatch(setCurrentDragItem(getSchemaById(id)))
+        store.dispatch(setEditorItemId(store.getState().currentDragItem.id, false))
         console.log(store.getState().currentDragItem, '当前拖拽的元素');
         e.target.className += ' onDrag'
 
@@ -83,7 +87,7 @@ export default function Middle() {
     const findIndexInParentSchema = (id: number) => {
         const schemaMap = store.getState().schemaMap
         const parent = schemaMap.get(schemaMap.get(id).parentId)
-        console.log(parent);
+        // console.log(parent);
         for (let i = 0; i < parent.body.length; i++) {
             if (parent.body[i].id === id) {
                 return i
@@ -108,17 +112,17 @@ export default function Middle() {
         if (e.target.id === `0`) {
             return
         }
-        if(!e.target.id){
+        if (!e.target.id) {
             return
         }
-        console.log(e);
-        console.log(e.target.id);
+        // console.log(e);
+        // console.log(e.target.id);
         const dragItem = store.getState().currentDragItem
-        console.log(dragItem, '当前拖拽的元素');
-        const enterItem = findSchemaById(Number(e.target.id))
-        console.log(enterItem, '当前enter的元素');
+        // console.log(dragItem, '当前拖拽的元素');
+        const enterItem = getSchemaById(Number(e.target.id))
+        // console.log(enterItem, '当前enter的元素');
         const pathArr = getParentIdList(enterItem.id, [])
-        console.log(pathArr);
+        // console.log(pathArr);
 
         if (pathArr.indexOf(dragItem.id) !== -1) {
             console.log('拖进子元素');
@@ -143,8 +147,6 @@ export default function Middle() {
     } //组件点击选中事件
 
     const fun = () => {
-        console.log(1);
-
         allowDrag ? setAllowDrag(false) : setAllowDrag(true)
     }
 
@@ -159,7 +161,7 @@ export default function Middle() {
             okType: 'danger',
             cancelText: '否',
             onOk() {
-                console.log('OK');
+                // console.log('OK');
                 store.dispatch(setEditorItemId(-9999, false)) //取消编辑状态
                 const schemaMap = store.getState().schemaMap
                 store.dispatch(deleteSchema(id))  //删除组件
@@ -168,7 +170,7 @@ export default function Middle() {
                 store.dispatch(initNameArray(newSchema)) //重置nameArray
             },
             onCancel() {
-                console.log('Cancel');
+                // console.log('Cancel');
             },
         });
     }//组件删除事件
@@ -181,8 +183,6 @@ export default function Middle() {
             onDragEnter={(event: any) => { handleDragEnter(event) }}
             onDragLeave={(event) => { handleDragLeave(event) }}
             onClick={(e: any) => {
-                console.dir(e.target);
-
                 if (e.target.id === '0' || e.target.tagName === 'H1') {  //当点击画布其他地方时，取消编辑组件的选中状态
                     if (!allowDrag) {
                         message.warn('新增组件未设置字段名')
@@ -208,20 +208,22 @@ export default function Middle() {
                                         onDrop={(event) => { event.stopPropagation(); handleDrop(event, item.id) }}
                                         onClick={() => { handleComponentClick(item.id) }}
                                         onDragStart={(event: any) => { event.stopPropagation(); handleDragStart(event, item.id) }}
-                                        // onDragEnter={(event: any) => { handleDragEnter(event) }}
-                                        // onDragLeave={(event) => { handleDragLeave(event) }}
                                         onDragEnd={handleDragEnd}
                                         draggable>
-                                        <div className='middle-component-top'>
-                                            <div className='component-label'>{item.title}</div>
-                                            {item.id === clickId ?
-                                                (<div style={{ pointerEvents: 'auto' }} onClick={() => {
-                                                    handleDelete(item.id)
-                                                }} className='delete'><DeleteOutlined /></div>
-                                                ) : (<></>)}
-                                        </div>
-                                        <Input name={item.name} className='middle-component'></Input>
-                                        {/* <InputNumber min={0} max={0} defaultValue={0}></InputNumber> */}
+                                        <InputEdi item={item} clickId={clickId} handleDelete={handleDelete}></InputEdi>
+                                    </div>
+                                )
+                            case 'numberInput':
+                                return (
+                                    <div id={`${item.id}`}
+                                        key={item.id}
+                                        className={item.id === clickId ? 'middle-component-container click' : 'middle-component-container'}
+                                        onDrop={(event) => { event.stopPropagation(); handleDrop(event, item.id) }}
+                                        onClick={() => { handleComponentClick(item.id) }}
+                                        onDragStart={(event: any) => { event.stopPropagation(); handleDragStart(event, item.id) }}
+                                        onDragEnd={handleDragEnd}
+                                        draggable>
+                                        <NumberInputEdi item={item} clickId={clickId} handleDelete={handleDelete}></NumberInputEdi>
                                     </div>
                                 )
                             case 'textarea':
@@ -232,15 +234,9 @@ export default function Middle() {
                                         onDrop={(event) => { event.stopPropagation(); handleDrop(event, item.id) }}
                                         onClick={() => { handleComponentClick(item.id) }}
                                         onDragStart={(event: any) => { event.stopPropagation(); handleDragStart(event, item.id) }}
-                                        // onDragEnter={(event: any) => { handleDragEnter(event) }}
-                                        // onDragLeave={(event) => { handleDragLeave(event) }}
                                         onDragEnd={handleDragEnd}
                                         draggable>
-                                        <div className='middle-component-top'>
-                                            <div className='component-label'>{item.title}</div>
-                                            {item.id === clickId ? (<div style={{ pointerEvents: 'auto' }} onClick={() => handleDelete(item.id)} className='delete'><DeleteOutlined /></div>) : (<></>)}
-                                        </div>
-                                        <TextArea rows={2} name={item.name} className='middle-component' />
+                                        <TextAreaEdi item={item} clickId={clickId} handleDelete={handleDelete}></TextAreaEdi>
                                     </div>
                                 )
                             case 'select':
@@ -252,21 +248,9 @@ export default function Middle() {
                                         onDrop={(event) => { event.stopPropagation(); handleDrop(event, item.id) }}
                                         onClick={() => { handleComponentClick(item.id) }}
                                         onDragStart={(event: any) => { event.stopPropagation(); handleDragStart(event, item.id) }}
-                                        // onDragEnter={(event: any) => { handleDragEnter(event) }}
-                                        // onDragLeave={(event) => { handleDragLeave(event) }}
                                         onDragEnd={handleDragEnd}
                                         draggable>
-                                        <div className='middle-component-top'>
-                                            <div className='component-label'>{item.title}</div>
-                                            {item.id === clickId ? (<div style={{ pointerEvents: 'auto' }} onClick={() => handleDelete(item.id)} className='delete'><DeleteOutlined /></div>) : (<></>)}
-                                        </div>
-                                        <select name={item.name} className='middle-component component-select'>
-                                            {item.options?.map(item => {
-                                                return (
-                                                    <option key={item.value} value={item.value}>{item.label}</option>
-                                                )
-                                            })}
-                                        </select>
+                                        <SelectEdi item={item} clickId={clickId} handleDelete={handleDelete}></SelectEdi>
                                     </div>
                                 )
                             case 'grid':
@@ -277,11 +261,9 @@ export default function Middle() {
                                         onDrop={(event) => { event.stopPropagation(); handleDrop(event, item.id) }}
                                         onClick={() => { handleComponentClick(item.id) }}
                                         onDragStart={(event: any) => { event.stopPropagation(); handleDragStart(event, item.id) }}
-                                        // onDragEnter={(event: any) => { handleDragEnter(event) }}
-                                        // onDragLeave={(event) => { handleDragLeave(event) }}
                                         onDragEnd={handleDragEnd}
                                         draggable>
-                                        <Grid item={item}></Grid>
+                                        <GridEdi item={item}></GridEdi>
                                     </div>
                                 )
                             default: return (

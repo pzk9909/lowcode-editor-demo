@@ -2,10 +2,9 @@
 import Schema from '../../schemaInterface'
 
 
-const currentDragItem:Schema={
-    type:'',
-    id:-9998,
-    path:''
+const currentDragItem: Schema = {
+    type: '',
+    id: -9998,
 }
 
 // 利用reducer将store和action串联起来

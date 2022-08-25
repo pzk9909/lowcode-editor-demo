@@ -1,13 +1,13 @@
 import store from "../../store/store";
-import { Input, Form, Select } from 'antd';
 import './style.css'
-import { useEffect, useState } from "react";
-
+import { useEffect,} from "react";
+import InputPre from "../../component/InputPre/InputPre"
+import TextAreaPre from "../../component/TextAreaPre/TextAreaPre"
+import SelectPre from "../../component/SelectPre/SelectPre"
+import NumberInputPre from "../NumberInputPre/NumberInputPre";
+import {  changeValueAsync } from '../../store/action'
 export default function PreGrid(props: any) {
-    const { TextArea } = Input;
-    const { Option } = Select;
 
-    const [a, setA] = useState(1)
     useEffect(() => {
         // console.log(props);
         // const dataJSON = localStorage.getItem('data')
@@ -17,17 +17,28 @@ export default function PreGrid(props: any) {
         //     setData(data)
         //     console.log(dataa);
         // }
-        console.log(props.data);
+        // console.log(props.data);
     }, [])
 
-
     const fun = () => {
-        let b = a + 1
-        setA(b)
-        console.log(b);
 
     }
-
+    const onChange = (e: any, name: string) => {
+        console.log(e);
+        let value
+        if (e === null) {
+            value = 0
+        }
+        if (e) {
+            if (typeof e === 'number') {
+                value = e ? e : 0
+            } else {
+                value = e.target.value ? e.target.value : 0
+            }
+        }
+        console.log(name, ':', value);
+        store.dispatch(changeValueAsync(name, value))
+    }
     store.subscribe(() => {
     }); //store状态更新触发
 
@@ -50,13 +61,15 @@ export default function PreGrid(props: any) {
                                                 <div id={`${item.id}`}
                                                     className={'grid-pre-component-container'}
                                                     key={item.id}>
-                                                    <Form.Item
-                                                        label={item.title}
-                                                        name={item.name}
-                                                        initialValue={props.data[item.name] ? props.data[item.name] : ''}
-                                                    >
-                                                        <Input className='pre-component'></Input>
-                                                    </Form.Item>
+                                                    <InputPre onChange={onChange} item={item} data={props.data}></InputPre>
+                                                </div>
+                                            )
+                                        case 'numberInput':
+                                            return (
+                                                <div id={`${item.id}`}
+                                                    key={item.id}
+                                                    className={'pre-component-container'}>
+                                                    <NumberInputPre onChange={onChange} item={item} data={props.data}></NumberInputPre>
                                                 </div>
                                             )
                                         case 'textarea':
@@ -64,13 +77,7 @@ export default function PreGrid(props: any) {
                                                 <div id={`${item.id}`}
                                                     className={'grid-pre-component-container'}
                                                     key={item.id}>
-                                                    <Form.Item
-                                                        label={item.title}
-                                                        name={item.name}
-                                                        initialValue={props.data[item.name] ? props.data[item.name] : ''}
-                                                    >
-                                                        <TextArea className='pre-component' />
-                                                    </Form.Item>
+                                                    <TextAreaPre item={item} data={props.data}></TextAreaPre>
                                                 </div>
                                             )
                                         case 'select':
@@ -78,22 +85,7 @@ export default function PreGrid(props: any) {
                                                 <div id={`${item.id}`}
                                                     className={'grid-pre-component-container'}
                                                     key={item.id}>
-                                                    <Form.Item
-                                                        label={item.title}
-                                                        name={item.name}
-                                                        initialValue={props.data[item.name] ? props.data[item.name] : ''}
-                                                    >
-                                                        <Select
-                                                            placeholder="请选择"
-                                                            allowClear
-                                                        >
-                                                            {item.options?.map((item: any) => {
-                                                                return (
-                                                                    <Option key={item.value} value={item.value}>{item.label}</Option>
-                                                                )
-                                                            })}
-                                                        </Select>
-                                                    </Form.Item>
+                                                    <SelectPre item={item} data={props.data}></SelectPre>
                                                 </div>
                                             )
                                         case 'grid':

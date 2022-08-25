@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import { initSchemaMap, initNameArray } from './store/action'
 function App() {
   const [route, setRoute] = useState('edi')
-  const [isNew,setIsNew] = useState(false)
+  const [isNew, setIsNew] = useState(false)
   useEffect(() => {
     const schemaJSON = localStorage.getItem('schema')
     if (schemaJSON) {
@@ -34,13 +34,13 @@ function App() {
     // console.log(jsonSchema);
     localStorage.setItem('schema', jsonSchema)
     console.log(store.getState().schemaMap);
+    console.log(schema);
+
     // console.log(store.getState().nameArray);
   }
 
   const goto = (route: string) => {
-    console.log(11);
     setRoute(route)
-    console.log(route);
     if (store.getState().editorItem.isNew) {
       message.warn('新增组件未设置字段名')
       return

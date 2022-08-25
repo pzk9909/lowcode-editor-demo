@@ -1,5 +1,37 @@
-.warn{
+.warn {
     color: red;
     font-size: 12px;
     text-align: center;
+}
+
+.switch-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.expression-container {
+    height: 50px;
+    padding-left: 15px;
+    padding-top: 10px;
+    background-color: rgb(236, 236, 236);
+    position: relative;
+    margin-bottom: 10px;
+    display: flex;
+}
+
+.expression-container::after {
+    display: block;
+    content: "";
+    height: 12px;
+    width: 12px;
+    position: absolute;
+    top: -6px;
+    left: 12px;
+    transform: rotate(45deg);
+    background-color: rgb(236, 236, 236);
+}
+
+.expression-save {
+    transform: translate(-20px, 10px);
 }

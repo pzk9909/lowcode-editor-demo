@@ -6,7 +6,6 @@ const page = {
     type: 'page',
     id: 0,
     body: [],
-    path: '0'
 }
 
 const initSchemaMap: any = (schema: any, schemaMap: any) => {
@@ -44,23 +43,22 @@ function reducer(state = schemaMap, action: any) {
             } else {
                 initSchemaMap(action.schema, newSchemaMap)
             }
-
             return newSchemaMap
         case 'moveSchema':
             {
                 const dragItem = action.item
                 const dropItem = schemaMapTmp.get(action.dropId)
-                console.log(dropItem);
+                // console.log(dropItem);
                 if (dragItem.parentId === -1) {  //从左侧拖入
-                    console.log('左侧拖入');
+                    // console.log('左侧拖入');
 
                     if (dropItem.hasOwnProperty('body')) {  //如果drop的位置是容器，则直接将拖拽的组件插入此容器
-                        console.log('拖入容器');
+                        // console.log('拖入容器');
 
                         const dragItemTmp = clone(dragItem)
                         dragItemTmp.parentId = dropItem.id
                         dropItem.body.push(dragItemTmp)
-                        console.log(dropItem);
+                        // console.log(dropItem);
                         schemaMapTmp.set(dragItemTmp.id, dragItemTmp)
                         if (dragItemTmp.type === 'grid') {
                             for (let i = 0; i < dragItemTmp.columns.length; i++) {
@@ -68,18 +66,18 @@ function reducer(state = schemaMap, action: any) {
                                 schemaMapTmp.set(dragItemTmp.columns[i].id, dragItemTmp.columns[i])
                             }
                         }
-                        console.log(dropItem);
+                        // console.log(dropItem);
 
                     } else {  //如果drop的位置是组件，则将拖拽的组件插入drop的位置
                         // const dropItemPathArr = dropItem.path.split('_')
                         // console.log(dropItemPathArr);
-                        console.log('------------');
+                        // console.log('------------');
 
                         const dropItemWrap = schemaMapTmp.get(dropItem.parentId)
                         const dropItemIndex = findIndexInSchema(dropItemWrap, dropItem.id)
-                        console.log(dropItemIndex, 'dropItemIndex');
-                        console.log(dropItemWrap);
-                        console.log(findIndexInSchema(dropItemWrap, dropItem.id));
+                        // console.log(dropItemIndex, 'dropItemIndex');
+                        // console.log(dropItemWrap);
+                        // console.log(findIndexInSchema(dropItemWrap, dropItem.id));
                         const dragItemTmp = clone(dragItem)
                         dragItemTmp.parentId = dropItemWrap.id
 
@@ -90,13 +88,13 @@ function reducer(state = schemaMap, action: any) {
                             }
                         }
                         dropItemWrap.body.splice(dropItemIndex + 1, 0, dragItemTmp)
-                        console.log(dropItemWrap);
+                        // console.log(dropItemWrap);
                         schemaMapTmp.set(dragItemTmp.id, dragItemTmp)
                     }
                 } else {  //中间组件移动
                     // console.log('中间组件移动');
                     // console.log(dragItem.id);
-                    console.log('------------');
+                    // console.log('------------');
                     const getParentIdList: any = (id: number, list: Array<number>) => {
                         const index = schemaMapTmp.get(id)
                         if (index.id === 0) return list
@@ -108,14 +106,14 @@ function reducer(state = schemaMap, action: any) {
                         }
                     }
 
-                    console.log(dropItem);
+                    // console.log(dropItem);
 
                     const dropItemPathArr = getParentIdList(dropItem.id, [])
-                    console.log(dropItemPathArr);
+                    // console.log(dropItemPathArr);
 
                     // console.log(dropItemPathArr);
                     if (dropItemPathArr.indexOf(dragItem.id) !== -1) {
-                        console.log('父元素拖进子元素');
+                        // console.log('父元素拖进子元素');
                         return schemaMapTmp;
                     } //判断是否将父组件拖入子组件，若是则不进行任何操作
 
@@ -124,27 +122,27 @@ function reducer(state = schemaMap, action: any) {
                         // const dropItemPathArr = dropItem.path.split('_')
                         // console.log(dropItemPathArr);
                         const dropItemWrap = schemaMapTmp.get(dropItem.parentId)
-                        console.log(dropItemWrap);
+                        // console.log(dropItemWrap);
                         dropItemIndex = findIndexInSchema(dropItemWrap, dropItem.id)
                     }//如果drop的位置不是容器，则先记录下drop的位置(如果在删除原先位置后再去获取drop位置，此时drop的位置会失真)
 
                     // const dragItemPathArr = dragItem.path.split('_')
                     const dragItemWrap = schemaMapTmp.get(dragItem.parentId)
                     // console.log(dragItemPathArr);
-                    console.log(dragItemWrap);
+                    // console.log(dragItemWrap);
                     let index = findIndexInSchema(dragItemWrap, dragItem.id)
-                    console.log(index);
+                    // console.log(index);
                     dragItemWrap.body.splice(index, 1)  //删除原先位置
-                    console.log(dragItemWrap);
+                    // console.log(dragItemWrap);
 
                     if (dropItem.hasOwnProperty('body')) {  //如果drop的位置是容器，则直接将拖拽的组件插入此容器
                         const dragItemTmp = clone(dragItem)
-                        console.log(dragItemTmp);
-                        console.log(dropItem);
+                        // console.log(dragItemTmp);
+                        // console.log(dropItem);
 
                         dragItemTmp.parentId = dropItem.id
                         dropItem.body.push(dragItemTmp)
-                        console.log(dropItem);
+                        // console.log(dropItem);
                         schemaMapTmp.set(dragItemTmp.id, dragItemTmp)
                         if (dragItemTmp.type === 'grid') {
                             for (let i = 0; i < dragItemTmp.columns.length; i++) {
@@ -168,18 +166,59 @@ function reducer(state = schemaMap, action: any) {
                             }
                         }
                         dropItemWrap.body.splice(dropItemIndex, 0, dragItemTmp)
-                        console.log(dropItemWrap);
+                        // console.log(dropItemWrap);
                         schemaMapTmp.set(dragItemTmp.id, dragItemTmp)
                     }
                 }
             }
             return schemaMapTmp;
         case 'editorSchema':
-            const editorSchema = schemaMapTmp.get(action.id)
-            console.log(editorSchema);
-            editorSchema[action.item] = action.value
+            {
+                const editorSchema = schemaMapTmp.get(action.id)
+                // console.log(editorSchema);
+                editorSchema[action.item] = action.value
+                return schemaMapTmp;
+            }
+        case 'changeExpression':
+            {
+                const editorSchema = schemaMapTmp.get(action.id)
+                // console.log(editorSchema.expressions);
+                // console.log(action.status);
+                // console.log(action.value);
 
-            return schemaMapTmp;
+                if (!editorSchema.expressions) {
+                    if (action.value !== '') {
+                        editorSchema.expressions = [`${action.status} when ${action.value}`]
+                    }
+                } //如果当前不存在表达式
+                else {
+                    if (action.value === '') {
+                        // console.log('delete');
+
+                        for (let i = 0; i < editorSchema.expressions.length; i++) {
+                            if (editorSchema.expressions[i].indexOf(action.status) !== -1) {
+                                // console.log(i);
+                                editorSchema.expressions.splice(i, 1)
+                                i--
+                            }
+                        }
+                    } else {
+                        let flag = false
+                        editorSchema.expressions = editorSchema.expressions.map((item: any) => {
+                            if (item.indexOf(action.status) !== -1) {
+                                flag = true
+                                return `${action.status} when ${action.value}`
+                            } else {
+                                return item
+                            }
+                        })
+                        if (!flag) {
+                            editorSchema.expressions.push(`${action.status} when ${action.value}`)
+                        }
+                    }
+                }
+                return schemaMapTmp;
+            }
         case 'deleteSchema':
             const deleteItem = schemaMapTmp.get(action.id)
             const deleteItemWrap = schemaMapTmp.get(deleteItem.parentId)

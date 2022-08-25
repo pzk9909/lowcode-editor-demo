@@ -1,24 +1,24 @@
 import store from "../../store/store";
 import { moveSchema, setCurrentDragItem, setEditorItemId, deleteSchema, initSchemaMap, initNameArray } from '../../store/action'
-import { Input, Modal, message } from 'antd';
+import { Modal, message } from 'antd';
 import './style.css'
 import { useEffect, useState } from "react";
-import {
-    DeleteOutlined,
-    ExclamationCircleOutlined
-} from '@ant-design/icons';
+import { DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import InputEdi from "../InputEdi/InputEdi";
+import TextAreaEdi from '../../component/TextAreaEdi/TextAreaEdi';
+import SelectEdi from '../../component/SelectEdi/SelectEdi';
+import NumberInputEdi from "../NumberInputEdi/NumberInputEdi";
 import clone from '../../clone'
 
 export default function Grid(props: any) {
-    const { TextArea } = Input;
     const { confirm } = Modal;
     const [clickId, setClickId] = useState<number>() //记录当前点击的组件的ID
     const [allowDrag, setAllowDrag] = useState(true)
 
-    useEffect(() => {
-        // console.log(props);
-    })
-
+    store.subscribe(() => {
+        setClickId(store.getState().editorItem.currentEditorItemId)
+        setAllowDrag(!store.getState().editorItem.isNew)
+    }); //store状态更新触发
 
     const handleDelete = (id: number) => {
         confirm({
@@ -43,16 +43,12 @@ export default function Grid(props: any) {
         });
     }//组件删除事件
 
-    store.subscribe(() => {
-        setClickId(store.getState().editorItem.currentEditorItemId)
-        setAllowDrag(!store.getState().editorItem.isNew)
-    }); //store状态更新触发
-    const findDragItem = (id: number) => {
+    const getSchemaById = (id: number) => {
         let schemaMap = store.getState().schemaMap
         return schemaMap.get(id)
     } //根据ID获取对应的schema
+
     const handleDragOver = (e: any) => { e.preventDefault(); }
-    const handleDragLeave = (e: any) => { }
     const handleDrop = (e: any, id: number) => {
         e.preventDefault();
         document.getElementById(`${e.target.id}`)?.classList.remove('dragEnter-bottom')
@@ -82,7 +78,7 @@ export default function Grid(props: any) {
         if (!allowDrag) {
             return
         }
-        store.dispatch(setCurrentDragItem(findDragItem(id)))
+        store.dispatch(setCurrentDragItem(getSchemaById(id)))
         store.dispatch(setEditorItemId(store.getState().currentDragItem.id, false))
         console.log(store.getState().currentDragItem, '当前拖拽的元素');
         e.target.className += ' onDrag'
@@ -116,8 +112,6 @@ export default function Grid(props: any) {
                         <div
                             id={itm.id}
                             onDragOver={handleDragOver}
-                            // onDragEnter={(event: any) => { handleDragEnter(event) }}
-                            // onDragLeave={(event) => { handleDragLeave(event) }}
                             onDrop={(event) => {
                                 event.stopPropagation();
                                 handleDrop(event, itm.id)
@@ -136,15 +130,22 @@ export default function Grid(props: any) {
                                                     onDrop={(event) => { event.stopPropagation(); handleDrop(event, item.id) }}
                                                     onClick={(event: any) => { event.stopPropagation(); handleComponentClick(event, item.id) }}
                                                     onDragStart={(event: any) => { event.stopPropagation(); handleDragStart(event, index, item.id) }}
-                                                    // onDragEnter={(event: any) => { handleDragEnter(event) }}
-                                                    // onDragLeave={(event) => { handleDragLeave(event) }}
                                                     onDragEnd={handleDragEnd}
                                                     draggable>
-                                                    <div className='grid-component-top'>
-                                                        <div className='component-label'>{item.title}</div>
-                                                        {item.id === clickId ? (<div style={{ pointerEvents: 'auto' }} onClick={() => handleDelete(item.id)} className='delete'><DeleteOutlined /></div>) : (<></>)}
-                                                    </div>
-                                                    <Input name={item.name} className='middle-component'></Input>
+                                                    <InputEdi item={item} clickId={clickId} handleDelete={handleDelete}></InputEdi>
+                                                </div>
+                                            )
+                                        case 'numberInput':
+                                            return (
+                                                <div id={`${item.id}`}
+                                                    className={item.id === clickId ? 'click grid-component-container' : 'grid-component-container'}
+                                                    key={item.id}
+                                                    onDrop={(event) => { event.stopPropagation(); handleDrop(event, item.id) }}
+                                                    onClick={(event: any) => { event.stopPropagation(); handleComponentClick(event, item.id) }}
+                                                    onDragStart={(event: any) => { event.stopPropagation(); handleDragStart(event, index, item.id) }}
+                                                    onDragEnd={handleDragEnd}
+                                                    draggable>
+                                                    <NumberInputEdi item={item} clickId={clickId} handleDelete={handleDelete}></NumberInputEdi>
                                                 </div>
                                             )
                                         case 'textarea':
@@ -155,15 +156,9 @@ export default function Grid(props: any) {
                                                     onDrop={(event) => { event.stopPropagation(); handleDrop(event, item.id) }}
                                                     onClick={(event: any) => { event.stopPropagation(); handleComponentClick(event, item.id) }}
                                                     onDragStart={(event: any) => { event.stopPropagation(); handleDragStart(event, index, item.id) }}
-                                                    // onDragEnter={(event: any) => { handleDragEnter(event) }}
-                                                    // onDragLeave={(event) => { handleDragLeave(event) }}
                                                     onDragEnd={handleDragEnd}
                                                     draggable>
-                                                    <div className='grid-component-top'>
-                                                        <div className='component-label'>{item.title}</div>
-                                                        {item.id === clickId ? (<div style={{ pointerEvents: 'auto' }} onClick={() => handleDelete(item.id)} className='delete'><DeleteOutlined /></div>) : (<></>)}
-                                                    </div>
-                                                    <TextArea rows={2} name={item.name} className='middle-component' />
+                                                    <TextAreaEdi item={item} clickId={clickId} handleDelete={handleDelete}></TextAreaEdi>
                                                 </div>
                                             )
                                         case 'select':
@@ -174,21 +169,9 @@ export default function Grid(props: any) {
                                                     onDrop={(event) => { event.stopPropagation(); handleDrop(event, item.id) }}
                                                     onClick={(event: any) => { event.stopPropagation(); handleComponentClick(event, item.id) }}
                                                     onDragStart={(event: any) => { event.stopPropagation(); handleDragStart(event, index, item.id) }}
-                                                    // onDragEnter={(event: any) => { handleDragEnter(event) }}
-                                                    // onDragLeave={(event) => { handleDragLeave(event) }}
                                                     onDragEnd={handleDragEnd}
                                                     draggable>
-                                                    <div className='grid-component-top'>
-                                                        <div className='component-label'>{item.title}</div>
-                                                        {item.id === clickId ? (<div style={{ pointerEvents: 'auto' }} onClick={() => handleDelete(item.id)} className='delete'><DeleteOutlined /></div>) : (<></>)}
-                                                    </div>
-                                                    <select name={item.name} className='middle-component component-select'>
-                                                        {item.options?.map((item: any) => {
-                                                            return (
-                                                                <option key={item.value} value={item.value}>{item.label}</option>
-                                                            )
-                                                        })}
-                                                    </select>
+                                                    <SelectEdi item={item} clickId={clickId} handleDelete={handleDelete}></SelectEdi>
                                                 </div>
                                             )
                                         case 'grid':
@@ -199,8 +182,6 @@ export default function Grid(props: any) {
                                                     onDrop={(event) => { event.stopPropagation(); handleDrop(event, item.id) }}
                                                     onClick={(event: any) => { event.stopPropagation(); handleComponentClick(event, item.id) }}
                                                     onDragStart={(event: any) => { event.stopPropagation(); handleDragStart(event, index, item.id) }}
-                                                    // onDragEnter={(event: any) => { handleDragEnter(event) }}
-                                                    // onDragLeave={(event) => { handleDragLeave(event) }}
                                                     onDragEnd={handleDragEnd}
                                                     draggable>
                                                     <Grid item={item}></Grid>

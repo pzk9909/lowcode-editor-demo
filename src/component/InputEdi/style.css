@@ -1,0 +1,12 @@
+.inputEdi-container {
+    pointer-events: none;
+}
+
+.component-top {
+    display: flex;
+    justify-content: space-between;
+}
+
+.component-top-label {
+    pointer-events: none;
+}
